@@ -322,7 +322,11 @@ func (r *LBServiceReconciler) svcDesiredRoutes(newc *v2alpha1api.CiliumBGPVirtua
 			continue
 		}
 
-		desiredRoutes = append(desiredRoutes, netip.PrefixFrom(addr, addr.BitLen()))
+		block, err := addr.Prefix(64)
+		if err != nil {
+			continue
+		}
+		desiredRoutes = append(desiredRoutes, block)
 	}
 
 	return desiredRoutes, err
